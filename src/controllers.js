@@ -6,10 +6,12 @@ const generateShortCode = () => {
 
 const getHome = (req, res) => {
     res.send("Home route working");
+    // res.redirect('http://the-grandeur.vercel.app/')
 };
 
 const createLink = async (req, res) => {
     const { url } = req.body;
+    const userId = req.user.userId;
 
     if (!url) {
         return res.status(400).json({ message: "URL is required" });
@@ -18,11 +20,10 @@ const createLink = async (req, res) => {
     try {
         const shortCode = generateShortCode();
 
+      
         const result = await pool.query(
-            `INSERT INTO links (original_url, short_code)
-             VALUES ($1, $2)
-             RETURNING *`,
-            [url, shortCode]
+            "INSERT INTO links (original_url, short_code, user_id) VALUES ($1, $2, $3) RETURNING *",
+            [url, shortCode, userId]
         );
 
         res.json({
