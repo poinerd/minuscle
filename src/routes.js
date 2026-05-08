@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const { getHome, createLink } = require("./controllers");
+const { getHome, createLink, getQrCodeForLink } = require("./controllers");
 const { register, login } = require("./auth");
 const pool = require("./db");
 const auth = require("./middleware"); // 👈 JWT middleware
@@ -21,6 +21,11 @@ router.get("/", getHome);
 // CREATE SHORT LINK (PROTECTED)
 // -------------------
 router.post("/shorten", auth, createLink);
+
+// -------------------
+// QR CODE FOR EXISTING SHORT LINK (PUBLIC)
+// -------------------
+router.get("/qr/:shortCode", getQrCodeForLink);
 
 // -------------------
 // REDIRECT (PUBLIC)

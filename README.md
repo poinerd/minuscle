@@ -8,20 +8,20 @@ Built as a backend-focused project to demonstrate core concepts in API design, d
 
 ## 🚀 Features
 
-* Generate short URLs from long links
-* Redirect users using short codes
-* PostgreSQL database for persistent storage
-* RESTful API built with Express
-* Simple and clean architecture
+- Generate short URLs from long links
+- Redirect users using short codes
+- PostgreSQL database for persistent storage
+- RESTful API built with Express
+- Simple and clean architecture
 
 ---
 
 ## 🧱 Tech Stack
 
-* **Node.js**
-* **Express.js**
-* **PostgreSQL**
-* **pg (node-postgres)**
+- **Node.js**
+- **Express.js**
+- **PostgreSQL**
+- **pg (node-postgres)**
 
 ---
 
@@ -79,23 +79,42 @@ http://localhost:3000
 
 ```json
 {
-  "url": "https://example.com"
+  "url": "https://example.com",
+  "customCode": "my-custom-alias"
 }
 ```
+
+`customCode` is optional. If provided, the app stores a custom alias instead of generating a random short code.
 
 #### Response:
 
 ```json
 {
   "shortUrl": "http://localhost:3000/abc123",
+  "qrCode": "data:image/png;base64,...",
   "data": {
     "id": 1,
     "original_url": "https://example.com",
     "short_code": "abc123",
+    "user_id": 1,
     "created_at": "timestamp"
   }
 }
 ```
+
+---
+
+### 🔹 Generate QR Code for a Short Link
+
+**GET** `/qr/:shortCode`
+
+Example:
+
+```
+GET /qr/abc123
+```
+
+This returns a PNG image of a QR code that points to the short URL.
 
 ---
 
@@ -136,20 +155,19 @@ Table: `links`
 2. The server generates a unique short code
 3. The URL and code are stored in PostgreSQL
 4. When the short URL is accessed:
-
-   * The server looks up the original URL
-   * Redirects the user to the destination
+   - The server looks up the original URL
+   - Redirects the user to the destination
 
 ---
 
 ## 🔮 Future Improvements
 
-* 📊 Click tracking (analytics)
-* 🔗 Custom short URLs (aliases)
-* ⏱ Expiration dates for links
-* ⚡ Caching with Redis
-* 🔐 Rate limiting & security enhancements
-* 🌍 Deployment with custom domain
+- 📊 Click tracking (analytics)
+- 🔗 Custom short URLs (aliases)
+- ⏱ Expiration dates for links
+- ⚡ Caching with Redis
+- 🔐 Rate limiting & security enhancements
+- 🌍 Deployment with custom domain
 
 ---
 
@@ -182,9 +200,9 @@ GET /xyz789
 
 ## ⚠️ Important Notes
 
-* Ensure your PostgreSQL server is running before starting the app
-* Do not commit your `.env` file (it contains sensitive data)
-* Always normalize URLs (include `http://` or `https://`)
+- Ensure your PostgreSQL server is running before starting the app
+- Do not commit your `.env` file (it contains sensitive data)
+- Always normalize URLs (include `http://` or `https://`)
 
 ---
 

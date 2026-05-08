@@ -16,7 +16,6 @@ const register = async (req, res) =>{
   res.send("User created");
 }
 
-
 const login = async (req, res)=>{
     const {email, password} = req.body;
 
@@ -25,12 +24,11 @@ const login = async (req, res)=>{
         [email]
 
     )
-
     if (!user.rows.length) return res.status(400).send("Invalid");
 
   const valid = await bcrypt.compare(password, user.rows[0].password);
 
-  if (!valid) return res.status(400).send("Invalid");
+  if (!valid) return res.status(400).send("Invalid Credentials");
 
   const token = jwt.sign(
     { userId: user.rows[0].id },
@@ -43,3 +41,5 @@ const login = async (req, res)=>{
 
 
 module.exports = { register, login };
+
+
