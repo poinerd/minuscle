@@ -118,6 +118,31 @@ This returns a PNG image of a QR code that points to the short URL.
 
 ---
 
+### 🔹 Link Click Analytics (Protected)
+
+**GET** `/analytics/:shortCode`
+
+Requires the same `Authorization: Bearer <token>` header as `/shorten`.
+
+Example:
+
+```
+GET /analytics/abc123
+```
+
+Response:
+
+```json
+{
+  "shortCode": "abc123",
+  "originalUrl": "https://example.com",
+  "clickCount": 12,
+  "lastClickedAt": "2026-05-13T14:23:10.123Z"
+}
+```
+
+---
+
 ### 🔹 Redirect to Original URL
 
 **GET** `/:shortCode`
@@ -145,7 +170,26 @@ Table: `links`
 | id           | SERIAL    | Primary key             |
 | original_url | TEXT      | The original long URL   |
 | short_code   | TEXT      | Unique short identifier |
+| user_id      | INTEGER   | Owner user ID           |
 | created_at   | TIMESTAMP | Time of creation        |
+
+Table: `link_clicks`
+
+| Column     | Type      | Description                    |
+| ---------- | --------- | ------------------------------ |
+| id         | SERIAL    | Primary key                    |
+| link_id    | INTEGER   | Reference to `links.id`        |
+| clicked_at | TIMESTAMP | When the short URL was clicked |
+
+If you need to create the tracking table manually, use:
+
+```sql
+CREATE TABLE link_clicks (
+  id SERIAL PRIMARY KEY,
+  link_id INTEGER REFERENCES links(id) ON DELETE CASCADE,
+  clicked_at TIMESTAMP DEFAULT NOW()
+);
+```
 
 ---
 

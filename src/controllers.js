@@ -75,6 +75,40 @@ const createLink = async (req, res) => {
   }
 };
 
+const getLinkAnalytics = async (req, res) => {
+  const { shortCode } = req.params;
+  const userId = req.user.userId;
+
+  try {
+    const linkResult = await pool.query(
+      'SELECT id, original_url, short_code FROM links WHERE short_code = $1 AND user_id = $2',
+      [shortCode, userId]
+    );
+
+    if (!linkResult.rows.length) {
+      return res.status(404).json({ message: 'Link not found or access denied' });
+    }
+
+    const link = linkResult.rows[0];
+    const statsResult = await pool.query(
+      'SELECT COUNT(*) AS click_count, MAX(clicked_at) AS last_clicked_at FROM link_clicks WHERE link_id = $1',
+      [link.id]
+    );
+
+    const stats = statsResult.rows[0];
+
+    res.json({
+      shortCode: link.short_code,
+      originalUrl: link.original_url,
+      clickCount: Number(stats.click_count),
+      lastClickedAt: stats.last_clicked_at,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
 const getQrCodeForLink = async (req, res) => {
   const { shortCode } = req.params;
   const shortUrl = buildShortUrl(shortCode);
@@ -107,5 +141,6 @@ const getQrCodeForLink = async (req, res) => {
 module.exports = {
   getHome,
   createLink,
+  getLinkAnalytics,
   getQrCodeForLink,
 };

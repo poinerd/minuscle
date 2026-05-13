@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const { getHome, createLink, getQrCodeForLink } = require("./controllers");
+const { getHome, createLink, getQrCodeForLink, getLinkAnalytics } = require("./controllers");
 const { register, login } = require("./auth");
 const pool = require("./db");
 const auth = require("./middleware"); // 👈 JWT middleware
@@ -28,6 +28,11 @@ router.post("/shorten", auth, createLink);
 router.get("/qr/:shortCode", getQrCodeForLink);
 
 // -------------------
+// LINK ANALYTICS (PROTECTED)
+// -------------------
+router.get("/analytics/:shortCode", auth, getLinkAnalytics)
+
+// -------------------
 // REDIRECT (PUBLIC)
 // -------------------
 router.get("/:shortCode", async (req, res) => {
@@ -35,7 +40,7 @@ router.get("/:shortCode", async (req, res) => {
 
   try {
     const result = await pool.query(
-      "SELECT original_url FROM links WHERE short_code = $1",
+      "SELECT id, original_url FROM links WHERE short_code = $1",
       [shortCode]
     );
 
@@ -43,7 +48,13 @@ router.get("/:shortCode", async (req, res) => {
       return res.status(404).json({ message: "Link not found" });
     }
 
-    let url = result.rows[0].original_url;
+    const { id, original_url } = result.rows[0];
+    await pool.query(
+      "INSERT INTO link_clicks (link_id) VALUES ($1)",
+      [id]
+    );
+
+    let url = original_url;
 
     // fix missing protocol
     if (!url.startsWith("http")) {
