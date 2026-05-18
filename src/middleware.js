@@ -9,7 +9,7 @@ const auth = (req, res, next) =>{
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // 👈 userId stored here
+    req.user = decoded; //
     next();
   } catch {
     res.status(403).send("Invalid token");
@@ -17,3 +17,10 @@ const auth = (req, res, next) =>{
 }
 
 module.exports = auth;
+
+
+
+
+
+
+

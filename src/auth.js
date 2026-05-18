@@ -4,8 +4,7 @@ const pool = require ('./db')
 
 
 const register = async (req, res) =>{
-    const {email, password} = req.body
-
+    const {name, email, password} = req.body
     const hashed = await bcrypt.hash(password, 10)
     
     await pool.query(
@@ -13,12 +12,11 @@ const register = async (req, res) =>{
     [email, hashed]
   );
 
-  res.send("User created");
+  res.json({"Message": "User has been created"})
 }
 
 const login = async (req, res)=>{
     const {email, password} = req.body;
-
     const user = await pool.query(
         "SELECT * FROM users WHERE email=$1",
         [email]

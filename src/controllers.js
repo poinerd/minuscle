@@ -17,7 +17,7 @@ const getHome = (req, res) => {
 const createLink = async (req, res) => {
   const { url, customCode } = req.body;
   const userId = req.user.userId;
-
+  
   if (!url) {
     return res.status(400).json({ message: 'URL is required' });
   }
@@ -103,6 +103,7 @@ const getLinkAnalytics = async (req, res) => {
       clickCount: Number(stats.click_count),
       lastClickedAt: stats.last_clicked_at,
     });
+    
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: 'Server error' });

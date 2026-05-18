@@ -4,9 +4,7 @@ const router = express.Router();
 const { getHome, createLink, getQrCodeForLink, getLinkAnalytics } = require("./controllers");
 const { register, login } = require("./auth");
 const pool = require("./db");
-const auth = require("./middleware"); // 👈 JWT middleware
-
-// -------------------
+const auth = require("./middleware"); // 
 // AUTH
 // -------------------
 router.post("/register", register);
@@ -21,7 +19,6 @@ router.get("/", getHome);
 // CREATE SHORT LINK (PROTECTED)
 // -------------------
 router.post("/shorten", auth, createLink);
-
 // -------------------
 // QR CODE FOR EXISTING SHORT LINK (PUBLIC)
 // -------------------
@@ -47,7 +44,7 @@ router.get("/:shortCode", async (req, res) => {
     if (result.rows.length === 0) {
       return res.status(404).json({ message: "Link not found" });
     }
-
+    
     const { id, original_url } = result.rows[0];
     await pool.query(
       "INSERT INTO link_clicks (link_id) VALUES ($1)",
