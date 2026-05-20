@@ -11,7 +11,7 @@ const buildShortUrl = (code) => {
 };
 
 const getHome = (req, res) => {
-  res.send('Home route working');
+  res.send('Home ro ute working');
 };
 
 const createLink = async (req, res) => {
@@ -55,14 +55,15 @@ const createLink = async (req, res) => {
         }
       }
     }
-
-    const result = await pool.query(
-      'INSERT INTO links (original_url, short_code, user_id) VALUES ($1, $2, $3) RETURNING *',
-      [url, shortCode, userId]
-    );
-
+    
     const shortUrl = buildShortUrl(shortCode);
     const qrCodeDataUrl = await qrCode.toDataURL(shortUrl);
+
+
+    const result = await pool.query(
+      'INSERT INTO links (original_url, short_code, user_id, qr_code) VALUES ($1, $2, $3, $4) RETURNING *',
+      [url, shortCode, userId, qrCodeDataUrl ]
+    );
 
     res.json({
       shortUrl,
@@ -103,7 +104,7 @@ const getLinkAnalytics = async (req, res) => {
       clickCount: Number(stats.click_count),
       lastClickedAt: stats.last_clicked_at,
     });
-    
+
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: 'Server error' });
@@ -144,4 +145,5 @@ module.exports = {
   createLink,
   getLinkAnalytics,
   getQrCodeForLink,
+
 };

@@ -46,10 +46,10 @@ router.get("/:shortCode", async (req, res) => {
     }
     
     const { id, original_url } = result.rows[0];
-    await pool.query(
-      "INSERT INTO link_clicks (link_id) VALUES ($1)",
-      [id]
-    );
+    // await pool.query(
+    //   "INSERT INTO link_clicks (link_id) VALUES ($1)",
+    //   [id]
+    // );
 
     let url = original_url;
 
